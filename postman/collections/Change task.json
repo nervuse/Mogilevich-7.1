@@ -14,11 +14,25 @@
 					"script": {
 						"id": "5fdd5c92-4188-4152-9733-6275c9384605",
 						"exec": [
+							"let moment = require('moment')",
+							"",
 							"let jsonData = pm.response.json();",
 							"pm.environment.set('token', jsonData.id_token)",
 							"let contentType = pm.response.headers.get(\"Content-Type\")",
 							"let cacheControl = pm.response.headers.get(\"Cache-Control\")",
 							"let contentSecurityPolicy = pm.response.headers.get(\"Content-Security-Policy\")",
+							"",
+							"// Приводим к часовому поясу Москвы",
+							"let ourDateTime = moment().utc().format('ddd, DD MMM YYYY HH:mm [GMT]');",
+							"console.log(ourDateTime)",
+							"// Получаем дату из заголовка ответа",
+							"let responseDate = moment(responseHeaders['Date']);",
+							"// Сравниваем с текущей датой",
+							"if (responseDate.isSame(ourDateTime, 'minute')) {",
+							"    console.log('Дата в заголовке ответа соответствует текущей дате.');",
+							"} else {",
+							"    console.log('Дата в заголовке ответа НЕ соответствует текущей дате.');",
+							"}",
 							"",
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -326,7 +340,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "e6d10eef-327d-4301-97bf-6b8e158112dc",
+						"id": "7e3f1bff-4886-42df-ba65-c6c80a9d1ad0",
 						"exec": [
 							"let jsonData = pm.response.json();",
 							"let contentType = pm.response.headers.get(\"Content-Type\")",
