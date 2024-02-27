@@ -7,149 +7,6 @@
 	},
 	"item": [
 		{
-			"name": "login",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "04e9ecc9-5617-4a43-89e9-963df1bc28b1",
-						"exec": [
-							"let moment = require('moment')",
-							"let chai = require('chai')",
-							"",
-							"let jsonData = pm.response.json();",
-							"pm.environment.set('token', jsonData.id_token)",
-							"",
-							"//Использование совместно библиотек moment и chai",
-							"let ourDateTime = moment().utc().format('ddd, DD MMM YYYY HH:mm [GMT]');",
-							"console.log(ourDateTime);",
-							"// Получаем дату из заголовка ответа",
-							"let responseDate = moment(responseHeaders['Date']);",
-							"// Сравниваем с текущей датой",
-							"pm.test(\"Дата в заголовке соответсвует текущей дате\", function () {",
-							"    // Проверяем, совпадает ли дата в заголовке ответа с текущей датой",
-							"    chai.expect(responseDate.isSame(ourDateTime, 'minute')).to.be.true;",
-							"});",
-							"",
-							"pm.test(\"Status code is 200\", function () {",
-							"    chai.expect(pm.response.code).to.eql(200);",
-							"});",
-							"",
-							"pm.test(\"Status code name has string \\\"OK\\\"\", function () {",
-							"    chai.expect(pm.response.status).to.eql(\"OK\");",
-							"});",
-							"",
-							"pm.test(\"Проверка значения id_token\", function () {",
-							"    // Проверяем, существует ли id-token в response body",
-							"    chai.expect(jsonData).to.have.property('id_token');",
-							"    // Проверяем, что значение id-token является строкой",
-							"    chai.expect(jsonData['id_token']).to.be.a('string');",
-							"});",
-							"",
-							"pm.test(\"Content-Type is present and application/json\", function () {",
-							"    // Проверяем, что заголовок Content-Type присутствует в ответе",
-							"    chai.expect(pm.response.headers.has(\"Content-Type\")).to.be.true;",
-							"    // Проверяем, что значение заголовка Content-Type содержит \"application/json\"",
-							"    chai.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
-							"});",
-							"",
-							"pm.test(\"Cache-Control is present\", function () {",
-							"    chai.expect(pm.response.headers.has(\"Cache-Control\")).to.be.true;",
-							"    chai.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-cache, no-store, max-age=0, must-revalidate\")",
-							"});",
-							"",
-							"pm.test(\"Content-Security-Policy is present\", function () {",
-							"    chai.expect(pm.response.headers.has(\"Content-Security-Policy\")).to.be.true;",
-							"    chai.expect(pm.response.headers.get(\"Content-Security-Policy\")).to.include(\"default-src 'self'; frame-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com data:\")",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"id": "5726c8eb-8c01-432f-a34d-750815f34626",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "Accept",
-						"value": "application/json, text/plain, */*"
-					},
-					{
-						"key": "Accept-Language",
-						"value": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7"
-					},
-					{
-						"key": "Connection",
-						"value": "keep-alive"
-					},
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					},
-					{
-						"key": "Origin",
-						"value": "http://localhost:8080"
-					},
-					{
-						"key": "Referer",
-						"value": "http://localhost:8080/login"
-					},
-					{
-						"key": "Sec-Fetch-Dest",
-						"value": "empty"
-					},
-					{
-						"key": "Sec-Fetch-Mode",
-						"value": "cors"
-					},
-					{
-						"key": "Sec-Fetch-Site",
-						"value": "same-origin"
-					},
-					{
-						"key": "User-Agent",
-						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
-					},
-					{
-						"key": "sec-ch-ua",
-						"value": "\"Not A(Brand\";v=\"99\", \"Google Chrome\";v=\"121\", \"Chromium\";v=\"121\""
-					},
-					{
-						"key": "sec-ch-ua-mobile",
-						"value": "?0"
-					},
-					{
-						"key": "sec-ch-ua-platform",
-						"value": "\"macOS\""
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\"username\":\"{{adminLogin}}\",\"password\":\"{{adminPassword}}\",\"rememberMe\":false}"
-				},
-				"url": {
-					"raw": "http://localhost:8080/api/authenticate",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"authenticate"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "create a task",
 			"event": [
 				{
@@ -159,6 +16,8 @@
 						"exec": [
 							"let jsonData = pm.response.json();",
 							"pm.environment.set(\"task_id\", jsonData.id)",
+							"pm.environment.set(\"text\", jsonData.text)",
+							"",
 							"let chai = require('chai')",
 							"let moment = require('moment')",
 							"",
@@ -173,8 +32,8 @@
 							"    chai.expect(responseDate.isSame(ourDateTime, 'minute')).to.be.true;",
 							"});",
 							"",
-							"pm.test(\"Your test name\", function () {",
-							"    chai.expect(jsonData.text).to.eql(\"some text\");",
+							"pm.test(\"Your test name \" + pm.environment.get('text'), function () {",
+							"    chai.expect(jsonData.text).to.eql(pm.environment.get('text'));",
 							"});",
 							"",
 							"pm.test(\"Status code is 201\", function () {",
@@ -204,6 +63,58 @@
 						],
 						"type": "text/javascript"
 					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "619750b8-ce84-41f8-a2ec-b40bab7dd05f",
+						"exec": [
+							"pm.sendRequest({",
+							"    url: pm.variables.get(\"baseUrl\") + \"/authenticate\",",
+							"    method: 'POST',",
+							"    header: {",
+							"        'Accept': 'application/json, text/plain, */*',",
+							"        'Accept-Language': 'en-US,en;q=0.9,it-IT;q=0.8,it;q=0.7,fr-FR;q=0.6,fr;q=0.5,de-DE;q=0.4,de;q=0.3,ru;q=0.2',",
+							"        'Connection': 'keep-alive',",
+							"        'Content-Type': 'application/json',",
+							"        'Origin': 'https://sqlverifier-50d286d70656.herokuapp.com',",
+							"        'Referer': 'https://sqlverifier-50d286d70656.herokuapp.com/login',",
+							"        'Sec-Fetch-Dest': 'empty',",
+							"        'Sec-Fetch-Mode': 'cors',",
+							"        'Sec-Fetch-Site': 'same-origin',",
+							"        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',",
+							"        'sec-ch-ua': '\"Google Chrome\";v=\"119\", \"Chromium\";v=\"119\", \"Not?A_Brand\";v=\"24\"',",
+							"        'sec-ch-ua-mobile': '?0',",
+							"        'sec-ch-ua-platform': '\"macOS\"'",
+							"    },",
+							"    body: {",
+							"        mode: 'raw',",
+							"        raw: JSON.stringify({",
+							"            username: pm.variables.get(\"adminLogin\"),",
+							"            password: pm.variables.get(\"adminPassword\"),",
+							"            rememberMe: false",
+							"        })",
+							"    }",
+							"}, function (err, res) {",
+							"    if (err) {",
+							"        console.error(err);",
+							"    } else {",
+							"        // Извлекаем токен из ответа и сохраняем его в переменной окружения",
+							"        let responseBody = res.json();",
+							"        pm.environment.set(\"token\", responseBody.id_token); // Сохраняем токен в переменной окружения",
+							"        console.log(responseBody.id_token)",
+							"",
+							"        if (!responseBody.id_token) {",
+							"            console.error(\"Token not found in response body.\");",
+							"            // Возможно, нужно предпринять какие-то действия в случае ошибки",
+							"        }  ",
+							"    }    ",
+							"});",
+							"",
+							"pm.environment.set(\"text\", \"Текст из букв\")"
+						],
+						"type": "text/javascript"
+					}
 				}
 			],
 			"id": "afce59d9-dcaa-422e-9b7f-89953b6afac3",
@@ -228,7 +139,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"text\": \"some text\",\n  \"answer\": \"string\",\n  \"title\": \"string\"\n}"
+					"raw": "{\n  \"text\": \"{{text}}\",\n  \"answer\": \"string\",\n  \"title\": \"string\"\n}"
 				},
 				"url": {
 					"raw": "{{baseUrl}}/tasks",
@@ -365,6 +276,8 @@
 						"id": "7e3f1bff-4886-42df-ba65-c6c80a9d1ad0",
 						"exec": [
 							"let jsonData = pm.response.json();",
+							"pm.environment.set('text', jsonData.text)",
+							"",
 							"let chai = require('chai')",
 							"let moment = require('moment')",
 							"",
@@ -379,8 +292,8 @@
 							"    chai.expect(responseDate.isSame(ourDateTime, 'minute')).to.be.true;",
 							"});",
 							"",
-							"pm.test(\"Your test name\", function () {",
-							"    chai.expect(jsonData.text).to.eql(\"some new new text\");",
+							"pm.test(\"Your test name \" + pm.environment.get('text'), function () {",
+							"    chai.expect(jsonData.text).to.eql(pm.environment.get('text'));",
 							"});",
 							"",
 							"pm.test(\"Status code is 200\", function () {",
@@ -410,6 +323,16 @@
 						],
 						"type": "text/javascript"
 					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "b4e53038-8bbc-45d1-ba74-540eea78e51e",
+						"exec": [
+							"pm.environment.set('text', 'goodbye my life')"
+						],
+						"type": "text/javascript"
+					}
 				}
 			],
 			"id": "99ae7e3f-8ffc-457c-afff-20237a09fbfc",
@@ -434,7 +357,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"id\": {{task_id}},\n  \"text\": \"some new new text\"\n}"
+					"raw": "{\n  \"id\": {{task_id}},\n  \"text\": \"{{text}}\"\n}"
 				},
 				"url": {
 					"raw": "{{baseUrl}}/tasks/{{task_id}}",
@@ -455,7 +378,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "c56ed5d8-d8b4-4a89-b146-485e01c0d440",
+						"id": "0954d784-a1a8-48f4-8624-143d16cf87b3",
 						"exec": [
 							"let jsonData = pm.response.json();",
 							"let chai = require('chai')",
@@ -473,7 +396,7 @@
 							"});",
 							"",
 							"pm.sendRequest(",
-							"    {url: 'http://localhost:8080/api/tasks/1552',",
+							"    {url: 'http://localhost:8080/api/tasks/ ' + pm.environment.get('task_id'),",
 							"    method: 'DELETE',",
 							"    header:",
 							"    {'Authorization': 'Bearer ' + pm.environment.get('token'),",
@@ -483,8 +406,8 @@
 							"    console.log(response);",
 							"});",
 							"",
-							"pm.test(\"Your test name\", function () {",
-							"    chai.expect(jsonData.text).to.eql(\"some new new text\");",
+							"pm.test(\"Your test name \" + pm.environment.get('text'), function () {",
+							"    chai.expect(jsonData.text).to.eql(pm.environment.get('text'));",
 							"});",
 							"",
 							"pm.test(\"Status code is 200\", function () {",
@@ -510,7 +433,12 @@
 							"pm.test(\"Content-Security-Policy is present\", function () {",
 							"    chai.expect(pm.response.headers.has(\"Content-Security-Policy\")).to.be.true;",
 							"    chai.expect(pm.response.headers.get(\"Content-Security-Policy\")).to.include(\"default-src 'self'; frame-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com data:\")",
-							"});"
+							"});",
+							"",
+							"pm.environment.unset(\"task_id\")",
+							"pm.environment.unset(\"token\")",
+							"pm.environment.unset(\"text\")",
+							""
 						],
 						"type": "text/javascript"
 					}
